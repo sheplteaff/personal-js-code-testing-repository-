@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+    <title>Canvas Animation</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="400" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const balls = [];
+
+        function createBall() {
+            const ball = {
+                x: Math.random() * (canvas.width - 40) + 20,
+                y: Math.random() * (canvas.height - 40) + 20,
+                dx: Math.random() * 2 - 1,
+                dy: Math.random() * 2 - 1,
+                radius: 20,
+                color: getRandomColor()
+            };
+
+            balls.push(ball);
+        }
+
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function getRandomDirection() {
+            const angle = Math.random() * Math.PI * 2;
+            return {
+                dx: Math.cos(angle),
+                dy: Math.sin(angle)
+            };
+        }
+
+        function drawBall(ball) {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = ball.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (const ball of balls) {
+                drawBall(ball);
+
+                ball.x += ball.dx;
+                ball.y += ball.dy;
+
+                if (ball.x + ball.dx > canvas.width - ball.radius || ball.x + ball.dx < ball.radius) {
+                    const direction = getRandomDirection();
+                    ball.dx = direction.dx;
+                    ball.dy = direction.dy;
+                }
+
+                if (ball.y + ball.dy > canvas.height - ball.radius || ball.y + ball.dy < ball.radius) {
+                    const direction = getRandomDirection();
+                    ball.dx = direction.dx;
+                    ball.dy = direction.dy;
+                }
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        // Создаем несколько шариков
+        for (let i = 0; i < 25; i++) {
+            createBall();
+        }
+
+        draw();
+    </script>
+</body>
+</html>
